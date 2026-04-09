@@ -20,6 +20,9 @@ type Props = {
   selectedCategories: string[];
   setSelectedCategories: (val: string[]) => void;
 
+ selectedGbovCategories: string[];
+  setSelectedGbovCategories: (val: string[]) => void;
+
   subcategories: subcategories[]
   subcategoryNames: string[];
   selectedSubcategories: string[];
@@ -57,6 +60,9 @@ export default function DataPageFilters({
   subcategoryNames,
   selectedSubcategories,
   setSelectedSubcategories,
+
+  selectedGbovCategories,
+  setSelectedGbovCategories,
 
   attackMethods,
   selectedAttackMethods,
@@ -108,6 +114,8 @@ export default function DataPageFilters({
           setSelectedAttackMethods={setSelectedAttackMethods}
           gbovCategories={gbovCategories} // 👈 ADD THIS
           gbovAttackMethods={gbovAttackMethods} // 👈 ADD THIS
+          selectedGbovCategories={selectedGbovCategories} 
+          setSelectedGbovCategories={setSelectedGbovCategories} 
         />
       <div className="my-4 flex flex-row flex-wrap gap-4">
         <AttackSourcesFilter
