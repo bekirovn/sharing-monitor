@@ -19,6 +19,9 @@ type Props = {
   selectedAttackMethods: string[];
   setSelectedAttackMethods: (val: string[]) => void;
 
+  selectedGbovCategories: string[];
+  setSelectedGbovCategories: (val: string[]) => void;
+
   gbovCategories: any[]; // 👈 ADD THIS
   gbovAttackMethods: any[];
 };
@@ -34,7 +37,9 @@ export default function CategoriesAdvancedFilter({
   selectedAttackMethods,
   setSelectedAttackMethods,
 gbovCategories,
-gbovAttackMethods
+gbovAttackMethods,
+   selectedGbovCategories,
+  setSelectedGbovCategories,
 }: Props) {
   const lang = useContext(LangContext);
   const [isOpen, setIsOpen] = useState(false);
@@ -90,6 +95,8 @@ gbovAttackMethods
           setSelectedAttackMethods={setSelectedAttackMethods}
           gbovCategories={gbovCategories} // 👈 ADD THIS
           gbovAttackMethods={gbovAttackMethods} // 👈 ADD THIS
+           selectedGbovCategories={selectedGbovCategories} 
+                 setSelectedGbovCategories={setSelectedGbovCategories} 
         />
       )}
     </div>
