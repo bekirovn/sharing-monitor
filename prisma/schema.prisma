@@ -1,0 +1,209 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+model accounts {
+  id                   Int       @default(autoincrement())
+  compound_id          String    @unique(map: "compound_id") @db.VarChar(255)
+  user_id              Int
+  provider_type        String    @db.VarChar(255)
+  provider_id          String    @db.VarChar(255)
+  provider_account_id  String    @unique(map: "provider_account_id") @db.VarChar(255)
+  refresh_token        String?   @db.Text
+  access_token         String?   @db.Text
+  access_token_expires DateTime? @db.DateTime
+  created_at           DateTime  @default(now(), map: "DF__accounts__create__36B12243") @db.DateTime
+  updated_at           DateTime  @default(now(), map: "DF__accounts__update__37A5467C") @db.DateTime
+
+  @@index([provider_id], map: "provider_id")
+  @@index([user_id], map: "user_id")
+}
+
+model sessions {
+  id            Int      @default(autoincrement())
+  user_id       Int
+  expires       DateTime @db.DateTime
+  session_token String   @unique(map: "session_token") @db.VarChar(255)
+  access_token  String   @unique(map: "access_token") @db.VarChar(255)
+  created_at    DateTime @default(now(), map: "DF__sessions__create__398D8EEE") @db.DateTime
+  updated_at    DateTime @default(now(), map: "DF__sessions__update__3A81B327") @db.DateTime
+}
+
+model users {
+  id             Int       @id(map: "PK__users__3213E83F2F144F79") @default(autoincrement())
+  name           String?   @db.VarChar(255)
+  email          String?   @unique(map: "email") @db.VarChar(255)
+  email_verified DateTime? @db.DateTime
+  image          String?   @db.VarChar(255)
+  created_at     DateTime  @default(now(), map: "DF__users__created_a__3D5E1FD2") @db.DateTime
+  updated_at     DateTime  @default(now(), map: "DF__users__updated_a__3E52440B") @db.DateTime
+}
+
+model verification_requests {
+  id         Int      @default(autoincrement())
+  identifier String   @db.VarChar(255)
+  token      String   @unique(map: "token") @db.VarChar(255)
+  expires    DateTime @db.DateTime
+  created_at DateTime @default(now(), map: "DF__verificat__creat__403A8C7D") @db.DateTime
+  updated_at DateTime @default(now(), map: "DF__verificat__updat__412EB0B6") @db.DateTime
+}
+
+model attackMethods {
+  Id                                         Int                 @id(map: "PK__attackMe__3214EC077F60DD58") @default(autoincrement())
+  Name                                       String              @db.NVarChar(250)
+  SubcategoryId                              Int?
+  subcategories                              subcategories?      @relation(fields: [SubcategoryId], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_attackMethods_subcategories")
+  cases_cases_AttackMethodId1ToattackMethods cases[]             @relation("cases_AttackMethodId1ToattackMethods")
+  cases_cases_AttackMethodId2ToattackMethods cases[]             @relation("cases_AttackMethodId2ToattackMethods")
+  cases_cases_AttackMethodId3ToattackMethods cases[]             @relation("cases_AttackMethodId3ToattackMethods")
+  caseSubcategories                          caseSubcategories[]
+}
+
+model attackSources {
+  Id    Int     @id(map: "PK__attackSo__3214EC074018077D") @default(autoincrement())
+  Name  String  @db.NVarChar(50)
+  cases cases[]
+}
+
+model attackTargets {
+  Id    Int     @id(map: "PK__attackTa__3214EC07D68FE817") @default(autoincrement())
+  Name  String  @db.NVarChar(50)
+  cases cases[]
+}
+
+model caseLinks {
+  Id           Int      @id(map: "PK__caseLink__3214EC07AF99E97E") @default(autoincrement())
+  Link         String?  @db.NVarChar(200)
+  CaseId       Int?
+  ArchivedLink Boolean?
+}
+
+model cases {
+  Id                                                             Int                @id(map: "PK__cases__3214EC07093239ED") @default(autoincrement())
+  Title                                                          String?            @db.NVarChar(150)
+  Description                                                    String?            @db.NVarChar(800)
+  StartDate                                                      DateTime?          @db.DateTime
+  EndDate                                                        DateTime?          @db.DateTime
+  AttackTargetId                                                 Int?
+  AttackSourceId                                                 Int?
+  CategoryId                                                     Int?
+  Outcome                                                        String?            @db.NVarChar(400)
+  Comment                                                        String?            @db.NVarChar(100)
+  Period                                                         String?            @db.NVarChar(50)
+  TitleEn                                                        String             @default("", map: "DF__cases__TitleEn__6477ECF3") @db.NVarChar(150)
+  DescriptionEn                                                  String             @default("", map: "DF__cases__Descripti__656C112C") @db.NVarChar(800)
+  SubcategoryId1                                                 Int?
+  AttackMethodId1                                                Int?
+  SubcategoryId2                                                 Int?
+  AttackMethodId2                                                Int?
+  SubcategoryId3                                                 Int?
+  AttackMethodId3                                                Int?
+  GbovCategoryId1                                                Int?
+  GbovAttackMethodId1                                            Int?
+  GbovCategoryId2                                                Int?
+  GbovAttackMethodId2                                            Int?
+  Link1                                                          String?            @db.NVarChar(511)
+  Link2                                                          String?            @db.NVarChar(511)
+  Link3                                                          String?            @db.NVarChar(511)
+  ArchivedLink1                                                  String?            @db.NVarChar(511)
+  ArchivedLink2                                                  String?            @db.NVarChar(511)
+  ArchivedLink3                                                  String?            @db.NVarChar(511)
+  imageId                                                        String             @default("", map: "DF__cases__imageId__75A278F5") @db.NVarChar(36)
+  imageUrl                                                       String             @default("", map: "DF__cases__imageUrl__797309D9") @db.NVarChar(255)
+  CaseImages                                                     CaseImages[]
+  attackMethods_cases_AttackMethodId1ToattackMethods             attackMethods?     @relation("cases_AttackMethodId1ToattackMethods", fields: [AttackMethodId1], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_cases_attackMethod1")
+  attackMethods_cases_AttackMethodId2ToattackMethods             attackMethods?     @relation("cases_AttackMethodId2ToattackMethods", fields: [AttackMethodId2], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_cases_attackMethod2")
+  attackMethods_cases_AttackMethodId3ToattackMethods             attackMethods?     @relation("cases_AttackMethodId3ToattackMethods", fields: [AttackMethodId3], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_cases_attackMethod3")
+  attackSources                                                  attackSources?     @relation(fields: [AttackSourceId], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_cases_attackSources")
+  attackTargets                                                  attackTargets?     @relation(fields: [AttackTargetId], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_cases_attackTargets")
+  categories                                                     categories?        @relation(fields: [CategoryId], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_cases_categories")
+  gbovCategories_cases_GbovCategoryId1TogbovCategories           gbovCategories?    @relation("cases_GbovCategoryId1TogbovCategories", fields: [GbovCategoryId1], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_cases_gbovcategories1")
+  gbovCategories_cases_GbovCategoryId2TogbovCategories           gbovCategories?    @relation("cases_GbovCategoryId2TogbovCategories", fields: [GbovCategoryId2], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_cases_gbovcategories2")
+  gbovAttackMethods_cases_GbovAttackMethodId1TogbovAttackMethods gbovAttackMethods? @relation("cases_GbovAttackMethodId1TogbovAttackMethods", fields: [GbovAttackMethodId1], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_cases_gobvattackMethod1")
+  gbovAttackMethods_cases_GbovAttackMethodId2TogbovAttackMethods gbovAttackMethods? @relation("cases_GbovAttackMethodId2TogbovAttackMethods", fields: [GbovAttackMethodId2], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_cases_gobvattackMethod2")
+  subcategories_cases_SubcategoryId1Tosubcategories              subcategories?     @relation("cases_SubcategoryId1Tosubcategories", fields: [SubcategoryId1], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_cases_subcategories1")
+  subcategories_cases_SubcategoryId2Tosubcategories              subcategories?     @relation("cases_SubcategoryId2Tosubcategories", fields: [SubcategoryId2], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_cases_subcategories2")
+  subcategories_cases_SubcategoryId3Tosubcategories              subcategories?     @relation("cases_SubcategoryId3Tosubcategories", fields: [SubcategoryId3], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_cases_subcategories3")
+}
+
+model caseSubcategories {
+  Id             Int            @id(map: "PK__caseSubc__3214EC0708EB3FAE") @default(autoincrement())
+  Name           String?        @db.NVarChar(100)
+  CaseId         Int?
+  AttackMethodId Int?
+  SubcategoryId  Int?
+  attackMethods  attackMethods? @relation(fields: [AttackMethodId], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_caseSubcategories_attackMethods")
+  subcategories  subcategories? @relation(fields: [SubcategoryId], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_caseSubcategories_subcategories")
+}
+
+model categories {
+  Id            Int             @id(map: "PK__categori__3214EC07DAF41070") @default(autoincrement())
+  Name          String          @db.NVarChar(50)
+  cases         cases[]
+  subcategories subcategories[]
+}
+
+model gbovAttackMethods {
+  Id                                                 Int                  @id(map: "PK__gbovAtta__3214EC077DB3E207") @default(autoincrement())
+  Name                                               String?              @db.NVarChar(200)
+  GbovCategoryId                                     Int?
+  caseGbovCategories                                 caseGbovCategories[]
+  cases_cases_GbovAttackMethodId1TogbovAttackMethods cases[]              @relation("cases_GbovAttackMethodId1TogbovAttackMethods")
+  cases_cases_GbovAttackMethodId2TogbovAttackMethods cases[]              @relation("cases_GbovAttackMethodId2TogbovAttackMethods")
+  gbovCategories                                     gbovCategories?      @relation(fields: [GbovCategoryId], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_gbovAttackMethods_gobvAttackCategory")
+}
+
+model gbovCategories {
+  Id                                          Int                  @id(map: "PK__gbovCate__3214EC074A45F892") @default(autoincrement())
+  Name                                        String?              @db.NVarChar(100)
+  caseGbovCategories                          caseGbovCategories[]
+  cases_cases_GbovCategoryId1TogbovCategories cases[]              @relation("cases_GbovCategoryId1TogbovCategories")
+  cases_cases_GbovCategoryId2TogbovCategories cases[]              @relation("cases_GbovCategoryId2TogbovCategories")
+  gbovAttackMethods                           gbovAttackMethods[]
+}
+
+model caseGbovCategories {
+  Id                 Int                @id(map: "PK__caseGbov__3214EC07CC9B71B2") @default(autoincrement())
+  CaseId             Int?
+  GbovCategoryId     Int?
+  GbovAttackMethodId Int?
+  gbovAttackMethods  gbovAttackMethods? @relation(fields: [GbovAttackMethodId], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_caseGbovCategories_gbovAttackMethods")
+  gbovCategories     gbovCategories?    @relation(fields: [GbovCategoryId], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_caseGbovCategories_gbovCategories")
+}
+
+model subcategories {
+  Id                                        Int                 @id(map: "PK__subcateg__3214EC07BD45160B") @default(autoincrement())
+  Name                                      String?             @db.NVarChar(100)
+  CategoryId                                Int?
+  attackMethods                             attackMethods[]
+  cases_cases_SubcategoryId1Tosubcategories cases[]             @relation("cases_SubcategoryId1Tosubcategories")
+  cases_cases_SubcategoryId2Tosubcategories cases[]             @relation("cases_SubcategoryId2Tosubcategories")
+  cases_cases_SubcategoryId3Tosubcategories cases[]             @relation("cases_SubcategoryId3Tosubcategories")
+  caseSubcategories                         caseSubcategories[]
+  categories                                categories?         @relation(fields: [CategoryId], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_subcategories_categories")
+}
+
+model Images {
+  id        String  @id(map: "PK__Images__3213E83FAB998E93") @default(dbgenerated("newid()"), map: "DF__Images__id__74AE54BC") @db.UniqueIdentifier
+  imageName String? @db.NVarChar(255)
+  imageData Bytes?
+}
+
+model CloudinaryImages {
+  id            String  @id(map: "PK__Cloudina__3213E83FDFAF3B33") @default(dbgenerated("newid()"), map: "DF__CloudinaryIm__id__787EE5A0") @db.UniqueIdentifier
+  asset_id      String? @db.NVarChar(255)
+  thumbnail_url String? @db.NVarChar(255)
+  url           String? @db.NVarChar(255)
+}
+
+model CaseImages {
+  CaseImageId String @id(map: "PK__CaseImag__9647672F91126B93") @default(dbgenerated("newid()"), map: "DF__CaseImage__CaseI__04E4BC85") @db.UniqueIdentifier
+  CaseId      Int
+  ImageUrl    String @db.NVarChar(2047)
+  cases       cases  @relation(fields: [CaseId], references: [Id], onUpdate: NoAction, map: "FK_CaseImages")
+}
