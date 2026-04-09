@@ -1,0 +1,47 @@
+tables:
+
+cases
+- 
+id
+title
+description
+startDate
+endDate
+attackTarget
+attackSource
+categoryId
+outcome
+comment
+period
+
+categories
+
+caseSubcategories
+--
+caseId
+subcategoryId
+methodId
+
+attackTargets
+id name
+
+attackSources
+id name
+
+attackMethods
+id name
+
+GbovCategories
+id name
+
+GbovAttackMethods
+id name
+
+
+subcategories
+
+caseLinks
+id
+caseId
+link
+archivedLink
